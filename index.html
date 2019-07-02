@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>The clock</title>
+    <style>
+        *{text-decoration: none;list-style: none;margin: 0;padding: 0;transition: all 0.7s ease;}
+        body{background: #000;}
+        #time_box{width: 1000px;height: 1000px;color: #fff;margin: 0 auto;overflow: hidden;position: relative;}
+        ul{width: 100%;height: 100%;position: relative;}
+        li{height: 26px;line-height: 26px;position: absolute;top: 0;left: 0;width: 100%;text-align: right;}
+        #time_year{width: 1000px;height: 1000px;position: absolute;line-height: 1000px;text-align: center;top: 0;left: 0;z-index: 1;background: transparent;}
+        #time_month{width: 200px;height: 200px;position: absolute;top: 400px;left: 400px;z-index: 2;background: transparent;}
+        #time_day{width: 350px;height: 350px;position: absolute;top: 325px;left:325px;z-index: 3;background: transparent;}
+        #time_week{width: 470px;height: 470px;position: absolute;top: 265px;left:265px;z-index: 4;background: transparent;}
+        #time_chinese{width: 550px;height: 550px;position: absolute;top: 225px;left:225px;z-index: 5;background: transparent;}
+        #time_hour{width: 700px;height: 700px;position: absolute;top: 150px;left: 150px;z-index: 6;background: transparent;}
+        #time_minute{width: 850px;height: 850px;position: absolute;top: 75px;left: 75px;z-index: 7;background: transparent;}
+        #time_seconds{width: 1000px;height: 1000px;position: absolute;top: 0;left: 0;z-index: 8;background: transparent;}
+        #time_month li{top: 87px;}
+        #time_day li{top: 162px;}
+        #time_week li{top: 222px;}
+        #time_chinese li{top: 262px;}
+        #time_hour li{top: 337px;}
+        #time_minute li{top: 412px;}
+        #time_seconds li{top: 487px;}
+        #time_shadow{width: 1000px;height: 1000px;position: absolute;top: 0;left: 0;z-index: 9;background:transparent;display: none;}
+        #shadow_top{width: 100%;height: 487px;position: absolute;top: 0;left: 0;background: rgba(0,0,0,0.7);}
+        #shadow_bottom{width: 100%;height: 487px;position: absolute;bottom: 0;left: 0;background: rgba(0,0,0,0.7);}
+        #shadow_left{width: 45%;height: 26px;position: absolute;top: 487px;left: 0;background: rgba(0,0,0,0.7);}
+
+
+    </style>
+</head>
+<body>
+<div id="time_box">
+    <div id="time_year">二零一九年</div>
+    <div id="time_month"><ul></ul></div>
+    <div id="time_day"><ul></ul></div>
+    <div id="time_week"><ul></ul></div>
+    <div id="time_chinese"><ul></ul></div>
+    <div id="time_hour"><ul></ul></div>
+    <div id="time_minute"><ul></ul></div>
+    <div id="time_seconds"><ul></ul></div>
+    <div id="time_shadow">
+        <div id="shadow_top"></div>
+        <div id="shadow_left"></div>
+        <div id="shadow_bottom"></div>
+    </div>
+
+
+</div>
+
+
+<script src="js/jquery-3.4.1.min.js"></script>
+
+<script>
+    $(function () {
+        var myDate = new Date;
+        var year = myDate.getFullYear(); //获取当前年
+        var mon = myDate.getMonth() + 1; //获取当前月
+        var date = myDate.getDate(); //获取当前日
+        var h = myDate.getHours();//获取当前小时数(0-23)
+        var m = myDate.getMinutes();//获取当前分钟数(0-59)
+        // var m=58;
+        var s = myDate.getSeconds();//获取当前秒
+        var week = myDate.getDay();
+
+        var singular="(1),(3),(5),(7),(8),(10),(12)";
+        var mon_day=30;
+        if (singular.indexOf("("+mon+")")>0){
+            mon_day=31;
+        }
+        var month_data=["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],
+            day_data=["一日","二日","三日","四日","五日","六日","七日","八日","九日","十日","十一日","十二日","十三日","十四日","十五日","十六日","十七日","十八日","十九日","二十日","二十一日","二十二日","二十三日","二十四日","二十五日","二十六日","二十七日","二十八日","二十九日","三十日","三十一日"],
+            week_data=["星期一","星期二","星期三","星期四","星期五","星期六","星期日"],
+            chinese_data=["子时","丑时","寅时","卯时","辰时","巳时","午时","未时","申时","酉时","戌时","亥时"],
+            hour_data=["一时","二时","三时","四时","五时","六时","七时","八时","九时","十时","十一时","十二时","十三时","十四时","十五时","十六时","十七时","十八时","十九时","二十时","二十一时","二十二时","二十三时","零时"],
+            minute_data=["一分","二分","三分","四分","五分","六分","七分","八分","九分","十分","十一分","十二分","十三分","十四分","十五分","十六分","十七分","十八分","十九分","二十分","二十一分","二十二分","二十三分","二十四分","二十五分","二十六分","二十七分","二十八分","二十九分","三十分","三十一分","三十二分","三十三分","三十四分","三十五分","三十六分","三十七分","三十八分","三十九分","四十分","四十一分","四十二分","四十三分","四十四分","四十五分","四十六分","四十七分","四十八分","四十九分","五十分","五十一分","五十二分","五十三分","五十四分","五十五分","五十六分","五十七分","五十八分","五十九分","零分"],
+            seconds_data=["一秒","二秒","三秒","四秒","五秒","六秒","七秒","八秒","九秒","十秒","十一秒","十二秒","十三秒","十四秒","十五秒","十六秒","十七秒","十八秒","十九秒","二十秒","二十一秒","二十二秒","二十三秒","二十四秒","二十五秒","二十六秒","二十七秒","二十八秒","二十九秒","三十秒","三十一秒","三十二秒","三十三秒","三十四秒","三十五秒","三十六秒","三十七秒","三十八秒","三十九秒","四十秒","四十一秒","四十二秒","四十三秒","四十四秒","四十五秒","四十六秒","四十七秒","四十八秒","四十九秒","五十秒","五十一秒","五十二秒","五十三秒","五十四秒","五十五秒","五十六秒","五十七秒","五十八秒","五十九秒","零秒"];
+        var mon_num=0,day_num=0,week_num=0,chinese_num=0,hour_num=0,minute_num=0,seconds_num=0;
+        var times=setInterval(function () {
+            if (mon_num<12){//月
+                $("#time_month ul").append("<li class='time_month_"+mon_num+"'>"+month_data[mon_num]+"</li>");
+                var mon_deg=(mon_num+1)*(360/12);
+                $(".time_month_"+mon_num).css({"transform":"rotateZ(-"+mon_deg+"deg)"});
+                mon_num++;
+            }
+            if (mon_num>=12&&day_num<mon_day){//天
+                $("#time_day ul").append("<li class='time_day_"+day_num+"'>"+day_data[day_num]+"</li>");
+                var day_deg=(day_num+1)*(360/mon_day);
+                $(".time_day_"+day_num).css({"transform":"rotateZ(-"+day_deg+"deg)"});
+                day_num++;
+            }
+            if (day_num>=mon_day&&week_num<7){//周
+                $("#time_week ul").append("<li class='time_week_"+week_num+"'>"+week_data[week_num]+"</li>");
+                var week_deg=(week_num+1)*(360/7);
+                $(".time_week_"+week_num).css({"transform":"rotateZ(-"+week_deg+"deg)"});
+                week_num++;
+            }
+            if (week_num>=7&&chinese_num<12){//时辰
+                $("#time_chinese ul").append("<li class='time_chinese_"+chinese_num+"'>"+chinese_data[chinese_num]+"</li>");
+                var chinese_deg=(chinese_num+1)*(360/12);
+                $(".time_chinese_"+chinese_num).css({"transform":"rotateZ(-"+chinese_deg+"deg)"});
+                chinese_num++;
+            }
+            if (chinese_num>=12&&hour_num<24){//时
+                $("#time_hour ul").append("<li class='time_hour_"+hour_num+"'>"+hour_data[hour_num]+"</li>");
+                var hour_deg=(hour_num+1)*(360/24);
+                $(".time_hour_"+hour_num).css({"transform":"rotateZ(-"+hour_deg+"deg)"});
+                hour_num++;
+            }
+            if (hour_num>=24&&minute_num<60){//分钟
+                $("#time_minute ul").append("<li class='time_minute_"+minute_num+"'>"+minute_data[minute_num]+"</li>");
+                var minute_deg=(minute_num+1)*(360/60);
+                $(".time_minute_"+minute_num).css({"transform":"rotateZ(-"+minute_deg+"deg)"});
+                minute_num++;
+            }
+            if (minute_num>=60&&seconds_num<60){//秒
+                $("#time_seconds ul").append("<li class='time_seconds_num_"+seconds_num+"'>"+seconds_data[seconds_num]+"</li>");
+                var seconds_deg=(seconds_num+1)*(360/60);
+                $(".time_seconds_num_"+seconds_num).css({"transform":"rotateZ(-"+seconds_deg+"deg)"});
+                seconds_num++;
+            }
+            if(seconds_num>=60){
+                $("#time_shadow").css("display","block");
+                s=s+(12+mon_day+12+24+60+60+1)*0.05;
+                var m_box_deg=mon*360/12;
+                var d_box_deg=date*360/mon_day;
+                var w_box_deg=week*360/7;
+                var ch_box_deg=h*360/24;
+                var w_n=(Math.ceil(h/2)+1)*360/12;//时辰
+                var h_box_deg=h*360/24;
+                var mm_box_deg=m*360/60;
+                var s_box_deg=s*360/60;
+                $("#time_month").css({"transform":"rotateZ("+m_box_deg+"deg)"});//月
+                $("#time_day").css({"transform":"rotateZ("+d_box_deg+"deg)"});//日
+                $("#time_week").css({"transform":"rotateZ("+w_box_deg+"deg)"});//周
+                $("#time_chinese").css({"transform":"rotateZ("+w_n+"deg)"});//
+                //时辰
+                $("#time_hour").css({"transform":"rotateZ("+h_box_deg+"deg)"});//时
+                $("#time_minute").css({"transform":"rotateZ("+mm_box_deg+"deg)"});//分
+                $("#time_seconds").css({"transform":"rotateZ("+s_box_deg+"deg)"});//秒
+                var addtime=setInterval(function () {
+                    if (s<59){
+                        s++;
+                    }else{
+                        s=0;
+                        mm_box_deg+=360/60;
+                        $("#time_minute").css({"transform":"rotateZ("+mm_box_deg+"deg)"});//分
+                        if (m<59){
+                            m++;
+                        } else{
+                            m=0;
+                            h_box_deg+=360/24;
+                            $("#time_hour").css({"transform":"rotateZ("+h_box_deg+"deg)"});//时
+                            if (h<24){
+                                h++;
+                            }else{
+                                h=0;
+                                w_box_deg+=360/7;
+                                $("#time_week").css({"transform":"rotateZ("+w_box_deg+"deg)"});//周
+                                if (week<7){
+                                    week++;
+                                }else{
+                                    week=0;
+                                }
+                                d_box_deg+=360/mon_day;
+                                $("#time_day").css({"transform":"rotateZ("+d_box_deg+"deg)"});//日
+                                if (date<mon_day) {
+                                    date++;
+                                }else{
+                                    date=0;
+                                    m_box_deg+=360/12;
+                                    $("#time_month").css({"transform":"rotateZ("+m_box_deg+"deg)"});//月
+                                    if (mon<12){
+                                        mon++;
+                                    } else{
+                                        mon=0;
+                                        year++;
+                                    }
+                                }
+                            }
+                            w_n=(Math.ceil(h/2)+1)*360/12;//时辰
+                            $("#time_chinese").css({"transform":"rotateZ("+w_n+"deg)"});//
+                        }
+                    }
+                    s_box_deg+=360/60;
+                    $("#time_seconds").css({"transform":"rotateZ("+s_box_deg+"deg)"});//秒
+                },1000);
+                clearInterval(times);
+            }
+        },50);
+    })
+</script>
+<script>
+    console.log("%c^_^","color:red;");
+    console.log("author:%cmrzhaozn","color:red;font-size:20px;");
+    console.log("%c一个对编程充满热爱的「小猿」","color:red;font-size:20px;")
+</script>
+</body>
+</html>
