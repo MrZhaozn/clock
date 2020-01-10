@@ -37,7 +37,7 @@
 </head>
 <body>
 <div id="time_box">
-    <div id="time_year">二零二零年</div>
+    <div id="time_year"></div>
     <div id="time_month"><ul></ul></div>
     <div id="time_day"><ul></ul></div>
     <div id="time_week"><ul></ul></div>
@@ -61,6 +61,7 @@
     $(function () {
         var myDate = new Date;
         var year = myDate.getFullYear(); //获取当前年
+        $('#time_year').text(year);
         var mon = myDate.getMonth() + 1; //获取当前月
         var date = myDate.getDate(); //获取当前日
         var h = myDate.getHours();//获取当前小时数(0-23)
